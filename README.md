@@ -1,4 +1,4 @@
-# Cleaner_42
+# Cleaner_42 (for Linux)
 
 **Cleaner_42** script is linked to `cclean` command/program, and it's cleaning:
  - the Trash contents.
@@ -43,3 +43,7 @@ Please, report any bug happening with you while installing or running the comman
 Contact me on 42 slack **@obouykou** or post an issue here on Github
 
 42login : obouykou
+
+##PS :
+
+Updated to work for linux environnment by jbidaux
