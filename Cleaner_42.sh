@@ -68,60 +68,120 @@ function clean_glob {
 }
 
 function clean {
-	# to avoid printing empty lines
-	# or unnecessarily calling /bin/rm
-	# we resolve unmatched globs as empty strings.
-	shopt -s nullglob
+    # to avoid printing empty lines
+    # or unnecessarily calling /bin/rm
+    # we resolve unmatched globs as empty strings.
+    shopt -s nullglob
 
-	echo -ne "\033[38;5;208m"
+    echo -ne "\033[38;5;208m"
 
-	#42 Caches
-	clean_glob "$HOME"/Library/*.42*
-	clean_glob "$HOME"/*.42*
-	clean_glob "$HOME"/.zcompdump*
-	clean_glob "$HOME"/.cocoapods.42_cache_bak*
+    # Function to clean glob with error handling
+    function clean_glob {
+        for f in "$@"
+        do
+            rm -rf "$f" 2>/dev/null || echo "Failed to remove $f"
+        done
+    }
 
-	#Trash
-	clean_glob "$HOME"/.Trash/*
+    # General Caches and Trash
+    clean_glob "$HOME"/.cache/*
+    clean_glob "$HOME"/.local/share/Trash/*
 
-	#General Caches files
-	#giving access rights on Homebrew caches, so the script can delete them
-	/bin/chmod -R 777 "$HOME"/Library/Caches/Homebrew &>/dev/null
-	clean_glob "$HOME"/Library/Caches/*
-	clean_glob "$HOME"/Library/Application\ Support/Caches/*
+    # Application Caches
+    # Slack
+    clean_glob "$HOME"/.config/Slack/Cache/*
+    clean_glob "$HOME"/.config/Slack/Service\ Worker/CacheStorage/*
 
-	#Slack, VSCode, Discord and Chrome Caches
-	clean_glob "$HOME"/Library/Application\ Support/Slack/Service\ Worker/CacheStorage/*
-	clean_glob "$HOME"/Library/Application\ Support/Slack/Cache/*
-	clean_glob "$HOME"/Library/Application\ Support/discord/Cache/*
-	clean_glob "$HOME"/Library/Application\ Support/discord/Code\ Cache/js*
-	clean_glob "$HOME"/Library/Application\ Support/discord/Crashpad/completed/*
-	clean_glob "$HOME"/Library/Application\ Support/Code/Cache/*
-	clean_glob "$HOME"/Library/Application\ Support/Code/CachedData/*
-	clean_glob "$HOME"/Library/Application\ Support/Code/Crashpad/completed/*
-	clean_glob "$HOME"/Library/Application\ Support/Code/User/workspaceStorage/*
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/Service\ Worker/CacheStorage/*
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/*
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/Application\ Cache/*
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/*
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Crashpad/completed/*
+    # VSCode
+    clean_glob "$HOME"/.config/Code/Cache/*
+    clean_glob "$HOME"/.config/Code/CachedData/*
+    clean_glob "$HOME"/.config/Code/Crashpad/completed/*
+    clean_glob "$HOME"/.config/Code/User/workspaceStorage/*
 
-	#.DS_Store files
-	clean_glob "$HOME"/Desktop/**/*/.DS_Store
+    # Discord
+    clean_glob "$HOME"/.config/discord/Cache/*
+    clean_glob "$HOME"/.config/discord/Code\ Cache/js*
+    clean_glob "$HOME"/.config/discord/Crashpad/completed/*
 
-	#tmp downloaded files with browsers
-	clean_glob "$HOME"/Library/Application\ Support/Chromium/Default/File\ System
-	clean_glob "$HOME"/Library/Application\ Support/Chromium/Profile\ [0-9]/File\ System
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/File\ System
-	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/File\ System
+    # Chrome
+    clean_glob "$HOME"/.config/google-chrome/Default/Cache/*
+    clean_glob "$HOME"/.config/google-chrome/Default/Service\ Worker/CacheStorage/*
+    clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/Cache/*
+    clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/Service\ Worker/CacheStorage/*
 
-	#things related to pool (piscine)
-	clean_glob "$HOME"/Desktop/Piscine\ Rules\ *.mp4
-	clean_glob "$HOME"/Desktop/PLAY_ME.webloc
+    # Chromium
+    clean_glob "$HOME"/.config/chromium/Default/Cache/*
+    clean_glob "$HOME"/.config/chromium/Default/Service\ Worker/CacheStorage/*
+    clean_glob "$HOME"/.config/chromium/Profile\ [0-9]/Cache/*
+    clean_glob "$HOME"/.config/chromium/Profile\ [0-9]/Service\ Worker/CacheStorage/*
 
-	echo -ne "\033[0m"
+    # tmp downloaded files with browsers
+    clean_glob "$HOME"/.config/google-chrome/Default/File\ System
+    clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/File\ System
+    clean_glob "$HOME"/.config/chromium/Default/File\ System
+    clean_glob "$HOME"/.config/chromium/Profile\ [0-9]/File\ System
+
+    echo -ne "\033[0m"
 }
+
 clean
+
+
+# function clean {
+# 	# to avoid printing empty lines
+# 	# or unnecessarily calling /bin/rm
+# 	# we resolve unmatched globs as empty strings.
+# 	shopt -s nullglob
+
+# 	echo -ne "\033[38;5;208m"
+
+# 	#42 Caches
+# 	clean_glob "$HOME"/Library/*.42*
+# 	clean_glob "$HOME"/*.42*
+# 	clean_glob "$HOME"/.zcompdump*
+# 	clean_glob "$HOME"/.cocoapods.42_cache_bak*
+
+# 	#Trash
+# 	clean_glob "$HOME"/.Trash/*
+
+# 	#General Caches files
+# 	#giving access rights on Homebrew caches, so the script can delete them
+# 	/bin/chmod -R 777 "$HOME"/Library/Caches/Homebrew &>/dev/null
+# 	clean_glob "$HOME"/Library/Caches/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Caches/*
+
+# 	#Slack, VSCode, Discord and Chrome Caches
+# 	clean_glob "$HOME"/Library/Application\ Support/Slack/Service\ Worker/CacheStorage/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Slack/Cache/*
+# 	clean_glob "$HOME"/Library/Application\ Support/discord/Cache/*
+# 	clean_glob "$HOME"/Library/Application\ Support/discord/Code\ Cache/js*
+# 	clean_glob "$HOME"/Library/Application\ Support/discord/Crashpad/completed/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Code/Cache/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Code/CachedData/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Code/Crashpad/completed/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Code/User/workspaceStorage/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/Service\ Worker/CacheStorage/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/Service\ Worker/CacheStorage/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/Application\ Cache/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/Application\ Cache/*
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Crashpad/completed/*
+
+# 	#.DS_Store files
+# 	clean_glob "$HOME"/Desktop/**/*/.DS_Store
+
+# 	#tmp downloaded files with browsers
+# 	clean_glob "$HOME"/Library/Application\ Support/Chromium/Default/File\ System
+# 	clean_glob "$HOME"/Library/Application\ Support/Chromium/Profile\ [0-9]/File\ System
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Default/File\ System
+# 	clean_glob "$HOME"/Library/Application\ Support/Google/Chrome/Profile\ [0-9]/File\ System
+
+# 	#things related to pool (piscine)
+# 	clean_glob "$HOME"/Desktop/Piscine\ Rules\ *.mp4
+# 	clean_glob "$HOME"/Desktop/PLAY_ME.webloc
+
+# 	echo -ne "\033[0m"
+# }
+# clean
 
 if [ $should_log -eq 1 ]; then
 	echo
