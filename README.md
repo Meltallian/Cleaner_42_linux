@@ -46,4 +46,4 @@ Contact me on 42 slack **@obouykou** or post an issue here on Github
 
 ##PS :
 
-Updated to work for linux environnment by jbidaux
+Updated to work for linux environment by jbidaux
