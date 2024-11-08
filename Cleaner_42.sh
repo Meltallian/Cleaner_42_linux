@@ -50,21 +50,40 @@ if [[ "$1" == "-p" || "$1" == "--print" ]]; then
 	should_log=1
 fi
 
+# function clean_glob {
+# 	# don't do anything if argument count is zero (unmatched glob).
+# 	if [ -z "$1" ]; then
+# 		return 0
+# 	fi
+
+# 	if [ $should_log -eq 1 ]; then
+# 		for arg in "$@"; do
+# 			du -sh "$arg" 2>/dev/null
+# 		done
+# 	fi
+
+# 	/bin/rm -rf "$@" &>/dev/null
+
+# 	return 0
+# }
+
+#says yes to safety prompts
 function clean_glob {
-	# don't do anything if argument count is zero (unmatched glob).
-	if [ -z "$1" ]; then
-		return 0
-	fi
-
-	if [ $should_log -eq 1 ]; then
-		for arg in "$@"; do
-			du -sh "$arg" 2>/dev/null
-		done
-	fi
-
-	/bin/rm -rf "$@" &>/dev/null
-
-	return 0
+    for f in "$@"
+    do
+        if [ -e "$f" ]; then
+            # Explicitly asking for confirmation
+            echo "Are you sure you want to remove $f? [y/N]"
+            read -r answer
+            if [[ "$answer" == [Yy] ]]; then
+                rm -rf "$f" || echo "Failed to remove $f"
+            else
+                echo "Skipped $f"
+            fi
+        else
+            echo "File or directory $f does not exist."
+        fi
+    done
 }
 
 function clean {
@@ -97,6 +116,12 @@ function clean {
     clean_glob "$HOME"/.config/Code/CachedData/*
     clean_glob "$HOME"/.config/Code/Crashpad/completed/*
     clean_glob "$HOME"/.config/Code/User/workspaceStorage/*
+	clean_glob "$HOME"/.vscode/extensions/bianxianyang.htmlplay-0.0.10/node_modules/* #10.22.24 for onward
+	clean_glob "$HOME"/.vscode/extensions/ritwickdey.liveserver-5.7.9/node_modules/*
+	clean_glob "$HOME"/.vscode/extensions/ms-vscode.cpptools-1.22.9-linux-x64/*
+	clean_glob "$HOME"/.vscode/extensions/github.copilot-1.239.0/*
+	clean_glob "$HOME"/.vscode/extensions/github.copilot-1.241.0/dist/*
+	clean_glob "$HOME"/.vscode/extensions/ms-python.vscode-pylance-2024.10.1/dist/*
 
     # Discord
     clean_glob "$HOME"/.config/discord/Cache/*
@@ -108,6 +133,8 @@ function clean {
     clean_glob "$HOME"/.config/google-chrome/Default/Service\ Worker/CacheStorage/*
     clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/Cache/*
     clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/Service\ Worker/CacheStorage/*
+	clean_glob "$HOME"/.config/google-chrome/Default/extensions_crx_cache/*
+	clean_glob "$HOME"/.config/google-chrome/Default/extensions_crx_cache/*
 
     # Chromium
     clean_glob "$HOME"/.config/chromium/Default/Cache/*
@@ -120,6 +147,16 @@ function clean {
     clean_glob "$HOME"/.config/google-chrome/Profile\ [0-9]/File\ System
     clean_glob "$HOME"/.config/chromium/Default/File\ System
     clean_glob "$HOME"/.config/chromium/Profile\ [0-9]/File\ System
+
+	# Mozilla - Remove WhatsApp Web cache for specific profiles
+	clean_glob "$HOME"/.mozilla/firefox/dii18zp2.default-release-3/storage/default/https+++web.whatsapp.com/*
+	clean_glob "$HOME"/.mozilla/firefox/tcmqlfx0.default-release-2/storage/default/https+++web.whatsapp.com/*
+	clean_glob "$HOME"/.mozilla/firefox/gn4ny2l3.default-release-1/storage/default/https+++web.whatsapp.com/*
+	clean_glob "$HOME"/.mozilla/firefox/*.default-release/cache2/*
+	clean_glob "$HOME"/.mozilla/firefox/tcmqlfx0.default-release-2/cache2/*
+	clean_glob "$HOME"/.mozilla/firefox/gn4ny2l3.default-release-1/cache2/*
+	clean_glob "$HOME"/.mozilla/firefox/dii18zp2.default-release-3/cache2/*
+
 
     echo -ne "\033[0m"
 }
